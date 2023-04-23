@@ -1,0 +1,5 @@
+export enum PsCustType {
+  CUSTOMER = 'CUSTOMER',
+  PSYCHOLOGIST = 'PSYCHOLOGIST',
+  STAFF = 'STAFF',
+}
