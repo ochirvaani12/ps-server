@@ -25,10 +25,10 @@ export class PsServiceCustServiceReqEntity {
   serviceDate: Date;
 
   @Column({ name: 'START_TIME' })
-  startTime: string;
+  startDatetime: Date;
 
   @Column({ name: 'END_TIME' })
-  endTime: string;
+  endDatetime: Date;
 
   @Column({ name: 'DURATION' })
   duration: number;
@@ -55,8 +55,8 @@ export class PsServiceCustServiceReqEntity {
     c.spCustType = this.spCustType;
     c.serviceType = this.serviceType;
     c.serviceDate = this.serviceDate;
-    c.startTime = this.startTime;
-    c.endTime = this.endTime;
+    c.startDatetime = this.startDatetime;
+    c.endDatetime = this.endDatetime;
     c.duration = this.duration;
     c.status = this.status;
     c.price = this.price;

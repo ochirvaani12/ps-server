@@ -3,6 +3,10 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PsCustApiModule } from './api/ps.cust.api/ps.cust.api.module';
 import { PsPsyApiModule } from './api/ps.psy.api/ps.psy.api.module';
+import { PsCustBModule } from './bussiness/ps.cust.b/ps.cust.b.module';
+import { PsServiceBModule } from './bussiness/ps.service.b/ps.service.b.module';
+import { PsSecBModule } from './bussiness/ps.sec.b/ps.sec.b.module';
+import { PsCoreCModule } from './core/ps.core.c/ps.core.c.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -18,6 +22,10 @@ import { PsPsyApiModule } from './api/ps.psy.api/ps.psy.api.module';
     }),
     PsCustApiModule,
     PsPsyApiModule,
+    PsCustBModule,
+    PsServiceBModule,
+    PsSecBModule,
+    PsCoreCModule,
   ],
 })
 export class AppModule {}

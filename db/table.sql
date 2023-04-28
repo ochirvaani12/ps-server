@@ -1,5 +1,4 @@
 -- system tables
-
 create table if not exists ps_config (
     item_code varchar(40) PRIMARY KEY,
     value varchar(40),
@@ -39,7 +38,6 @@ create table if not exists ps_bulg_item (
 );
 
 -- operation tables
-
 create table if not exists ps_role (
     role_id integer primary key,
     name varchar(20) not null,
@@ -72,7 +70,6 @@ create table if not exists ps_role_oper (
 );
 
 -- api tables
-
 create table if not exists ps_api (
     api_code varchar(20) primary key,
     name varchar(20) not null,
@@ -152,7 +149,6 @@ create table if not exists ps_api_log (
 );
 
 -- cust tables
-
 create table if not exists ps_cust_type (
     cust_type varchar(20) PRIMARY KEY,
     name varchar(40) not null,
@@ -190,7 +186,7 @@ create table if not exists ps_cust (
     lastname varchar(40) not null,
     register_code varchar(20) not null,
     status varchar(20) not null,
-	mobile_no varchar(20) not null,
+    mobile_no varchar(20) not null,
     created_datetime timestamp not null
 );
 
@@ -258,7 +254,6 @@ create table if not exists ps_session (
 );
 
 -- service tables
-
 create table if not exists ps_service_type (
     service_type varchar(20) primary key,
     name varchar(100) not null,
@@ -323,7 +318,6 @@ create table if not exists ps_cust_service_req_log (
 );
 
 -- bank tables
-
 create table if not exists ps_bank (
     bank_code varchar(20) primary key,
     name varchar(20) not null,
@@ -361,10 +355,7 @@ create table if not exists ps_acnt (
     bank_code varchar(20) not null,
     acnt_code varchar(20) not null,
     acnt_name varchar(40) not null,
-    acnt_mod varchar(40) not null,
     status varchar(20) not null,
-    qr_code varchar(40),
-    qr_link varchar(200),
     created_datetime timestamp not null,
     FOREIGN KEY (acnt_type) REFERENCES ps_acnt_type (acnt_type),
     FOREIGN KEY (bank_code) REFERENCES ps_bank (bank_code),
@@ -374,7 +365,6 @@ create table if not exists ps_acnt (
 );
 
 -- notif tables
-
 create table if not exists ps_notif_type (
     notif_type varchar(20) primary key,
     name varchar(20) not null,
@@ -452,7 +442,6 @@ create table if not exists ps_tkn (
 );
 
 -- fin tables
-
 create table if not exists ps_fin_invoice (
     invoice_id integer primary key,
     pay_amt numeric(23, 2) not null,
@@ -464,8 +453,9 @@ create table if not exists ps_fin_invoice (
     pay_cust_type varchar(20) not null,
     receive_cust_code varchar(20) not null,
     receive_cust_type varchar(20) not null,
-    bank_code varchar(20) not null,
+    src_bank_code varchar(20) not null,
     src_acnt_code varchar(20) not null,
+    dst_bank_code varchar(20) not null,
     dst_acnt_code varchar(20) not null,
     repay_date date not null,
     closed_datetime timestamp,

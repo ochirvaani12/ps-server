@@ -1,3 +1,3 @@
 export class PsServiceConfirmServiceRes {
-  payAmt: string;
+  payAmt: number;
 }

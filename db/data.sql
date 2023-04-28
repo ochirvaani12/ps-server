@@ -39,3 +39,5 @@ INSERT INTO ps_cust_attr_type (cust_type, attr_type, name, name2, description, d
 
 INSERT INTO ps_service_type (service_type, name, name2, order_no, created_datetime) VALUES('PS_MEETING', 'Сэтгэл зүйн уулзалт', 'Psychologist meeting service', 1, current_timestamp) ON CONFLICT DO NOTHING; INSERT INTO ps_service_cust_type (service_type, cust_type) VALUES('PS_MEETING', 'PSYCHOLOGIST') ON CONFLICT DO NOTHING;
 
+INSERT INTO ps_acnt_type (acnt_type, name, name2, created_datetime) VALUES('PMT_ACNT', 'Төлбөрийн данс', 'Payment account', current_timestamp) ON CONFLICT DO NOTHING;
+INSERT INTO ps_acnt_type (acnt_type, name, name2, created_datetime) VALUES('ACTIVE_ACNT', 'Төлбөр хүлээн авах данс', 'Active account', current_timestamp) ON CONFLICT DO NOTHING;

@@ -29,6 +29,14 @@ import { PsServiceCustServiceClient } from 'src/bussiness/ps.service.b/client/ps
 import { PsCustServiceData } from './data/ps.cust.service.data';
 import { PsCustConfirmServiceReqReq } from './req/ps.cust.confirm.service.req.req';
 import { PsCustConfirmServiceReqRes } from './res/ps.cust.confirm.service.req.res';
+import { PsServiceConfirmServiceRes } from 'src/bussiness/ps.service.b/client/ps.service.confirm.service.res';
+import { PsServiceConfirmServiceReq } from 'src/bussiness/ps.service.b/client/ps.service.confirm.service.req';
+import { PsCustServiceReq } from './req/ps.cust.service.req';
+import { PsCustAcntRes } from './res/ps.cust.acnt.res';
+import { PsCustAcntClient } from 'src/bussiness/ps.cust.b/client/ps.cust.acnt.client';
+import { PsCustInvoieRes } from './res/ps.cust.invoice.res';
+import { PsServiceInvoiceClient } from 'src/bussiness/ps.service.b/client/ps.service.invoice.client';
+import { PsCustInvoiceData } from './data/ps.cust.invoice.data';
 
 @Controller('cust')
 export class PsCustApiController {
@@ -331,8 +339,8 @@ export class PsCustApiController {
         d.spCustType = i.spCustType;
         d.serviceType = i.serviceType;
         d.serviceDate = i.serviceDate;
-        d.startTime = i.startTime;
-        d.endTime = i.endTime;
+        d.startDatetime = i.startDatetime;
+        d.endDatetime = i.endDatetime;
         d.duration = i.duration;
         d.status = i.status;
         d.price = i.price;
@@ -360,6 +368,19 @@ export class PsCustApiController {
         headers,
         operCode,
       );
+
+      const req: PsServiceConfirmServiceReq = new PsServiceConfirmServiceReq();
+      req.serviceType = psCustConfirmServiceReqReq.serviceType;
+      req.spCustCode = psCustConfirmServiceReqReq.spCustCode;
+      req.spCustType = psCustConfirmServiceReqReq.spCustType;
+      req.startDatetime = psCustConfirmServiceReqReq.startDatetime;
+      req.duration = psCustConfirmServiceReqReq.duration;
+      req.custCode = session.custCode;
+      req.custType = session.custType;
+      const ret: PsServiceConfirmServiceRes =
+        await this.serviceBService.confirmServiceReq(req);
+
+      res.payAmt = ret.payAmt;
     } catch (err) {
       res.responseCode = 99;
       res.responseDesc = err;
@@ -368,57 +389,142 @@ export class PsCustApiController {
   }
 
   @Post('createServiceReq')
-  async createServiceReq(@Headers() headers: any) {
-    const operCode = '2009';
+  async createServiceReq(
+    @Headers() headers: any,
+    @Body() psCustConfirmServiceReqReq: PsCustConfirmServiceReqReq,
+  ): Promise<PsCustMainRes> {
+    const res: PsCustMainRes = new PsCustMainRes();
+    try {
+      const operCode = '2009';
+      const session: PsSecSessionClient = await this.secBService.checkSession(
+        headers,
+        operCode,
+      );
 
-    const session: PsSecSessionClient = await this.secBService.checkSession(
-      headers,
-      operCode,
-    );
-    return session;
+      const req: PsServiceConfirmServiceReq = new PsServiceConfirmServiceReq();
+      req.serviceType = psCustConfirmServiceReqReq.serviceType;
+      req.spCustCode = psCustConfirmServiceReqReq.spCustCode;
+      req.spCustType = psCustConfirmServiceReqReq.spCustType;
+      req.startDatetime = psCustConfirmServiceReqReq.startDatetime;
+      req.duration = psCustConfirmServiceReqReq.duration;
+      req.custCode = session.custCode;
+      req.custType = session.custType;
+      await this.serviceBService.createServiceReq(req);
+    } catch (err) {
+      res.responseCode = 99;
+      res.responseDesc = err;
+    }
+    return res;
   }
 
   @Post('startServiceReq')
-  async startServiceReq(@Headers() headers: any) {
-    const operCode = '2010';
+  async startServiceReq(
+    @Headers() headers: any,
+    @Body() psCustServiceReq: PsCustServiceReq,
+  ) {
+    const res: PsCustMainRes = new PsCustMainRes();
+    try {
+      const operCode = '2010';
+      await this.secBService.checkSession(headers, operCode);
 
-    const session: PsSecSessionClient = await this.secBService.checkSession(
-      headers,
-      operCode,
-    );
-    return session;
+      await this.serviceBService.startServiceReq(psCustServiceReq.recId);
+    } catch (err) {
+      res.responseCode = 99;
+      res.responseDesc = err;
+    }
   }
 
   @Post('finishServiceReq')
-  async finishServiceReq(@Headers() headers: any) {
-    const operCode = '2011';
+  async finishServiceReq(
+    @Headers() headers: any,
+    @Body() psCustServiceReq: PsCustServiceReq,
+  ) {
+    const res: PsCustMainRes = new PsCustMainRes();
+    try {
+      const operCode = '2011';
+      await this.secBService.checkSession(headers, operCode);
 
-    const session: PsSecSessionClient = await this.secBService.checkSession(
-      headers,
-      operCode,
-    );
-    return session;
+      await this.serviceBService.finishServiceReq(psCustServiceReq.recId);
+    } catch (err) {
+      res.responseCode = 99;
+      res.responseDesc = err;
+    }
   }
 
   @Post('detailBankAcnt')
-  async detailBankAcnt(@Headers() headers: any) {
-    const operCode = '2012';
+  async detailBankAcnt(@Headers() headers: any): Promise<PsCustAcntRes> {
+    const res: PsCustAcntRes = new PsCustAcntRes();
+    try {
+      const operCode = '2012';
+      const session: PsSecSessionClient = await this.secBService.checkSession(
+        headers,
+        operCode,
+      );
 
-    const session: PsSecSessionClient = await this.secBService.checkSession(
-      headers,
-      operCode,
-    );
-    return session;
+      const acnt: PsCustAcntClient = await this.custBService.detailBankAcnt(
+        session.custCode,
+        session.custType,
+      );
+
+      res.acntType = acnt.acntType;
+      res.custCode = acnt.custCode;
+      res.custType = acnt.custType;
+      res.bankCode = acnt.bankCode;
+      res.acntCode = acnt.acntCode;
+      res.acntName = acnt.acntName;
+      res.status = acnt.status;
+      res.createdDatetime = acnt.createdDatetime;
+    } catch (err) {
+      res.responseCode = 99;
+      res.responseDesc = err;
+    }
+    return res;
   }
 
   @Post('selectInvoice')
-  async selectInvoice(@Headers() headers: any) {
-    const operCode = '2013';
+  async selectInvoice(@Headers() headers: any): Promise<PsCustInvoieRes> {
+    const res: PsCustInvoieRes = new PsCustInvoieRes();
+    try {
+      const operCode = '2013';
+      const session: PsSecSessionClient = await this.secBService.checkSession(
+        headers,
+        operCode,
+      );
 
-    const session: PsSecSessionClient = await this.secBService.checkSession(
-      headers,
-      operCode,
-    );
-    return session;
+      const invoices: PsServiceInvoiceClient[] =
+        await this.serviceBService.selectInvoice(
+          session.custCode,
+          session.custType,
+        );
+
+      const resData: PsCustInvoiceData[] = [];
+
+      for (const i of invoices) {
+        const data: PsCustInvoiceData = new PsCustInvoiceData();
+        data.invoiceId = i.invoiceId;
+        data.payAmt = i.payAmt;
+        data.paidAmt = i.paidAmt;
+        data.feeAmt = i.feeAmt;
+        data.paidFeeAmt = i.paidFeeAmt;
+        data.serviceType = i.serviceType;
+        data.payCustCode = i.payCustCode;
+        data.payCustType = i.payCustType;
+        data.receiveCustCode = i.receiveCustCode;
+        data.receiveCustType = i.receiveCustType;
+        data.srcBankCode = i.srcBankCode;
+        data.srcAcntCode = i.srcAcntCode;
+        data.dstBankCode = i.dstBankCode;
+        data.dstAcntCode = i.dstAcntCode;
+        data.repayDate = i.repayDate;
+        data.closedDatetime = i.closedDatetime;
+        data.createdDatetime = i.createdDatetime;
+        resData.push(data);
+      }
+      res.resData = resData;
+    } catch (err) {
+      res.responseCode = 99;
+      res.responseDesc = err;
+    }
+    return res;
   }
 }

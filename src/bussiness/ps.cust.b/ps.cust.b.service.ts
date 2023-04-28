@@ -16,6 +16,10 @@ import { PsCustAttrEntity } from './entity/ps.cust.attr.entity';
 import { PsCustAttrVerfStatus } from 'src/core/ps.core.c/enum/ps.cust.attr.verf.status';
 import { VwPsCustPsychologistEntity } from './entity/vw.ps.cust.psychologist.entity';
 import { VwPsCustPsychologistClient } from './client/vw.ps.cust.psychologist.client';
+import { PsCustAcntClient } from './client/ps.cust.acnt.client';
+import { PsCustAcntEntity } from './entity/ps.cust.acnt.entity';
+import { PsAcntType } from 'src/core/ps.core.c/enum/ps.acnt.type';
+import { PsCustType } from 'src/core/ps.core.c/enum/ps.cust.type';
 
 @Injectable()
 export class PsCustBService {
@@ -157,6 +161,33 @@ export class PsCustBService {
     } catch (err) {
       this.logger.warn(`detail psychologist error: ${err}`);
       throw new Error('Сэтгэл зүйчийн мэдээлэл татхад алдаа гарлаа');
+    }
+  }
+
+  async detailBankAcnt(
+    custCode: string,
+    custType: string,
+  ): Promise<PsCustAcntClient> {
+    try {
+      const acnt: PsCustAcntEntity = await this.em.findOne(PsCustAcntEntity, {
+        where: {
+          custCode: custCode,
+          custType: custType,
+          acntType:
+            custType == PsCustType.CUSTOMER
+              ? PsAcntType.PMT_ACNT
+              : PsAcntType.ACTIVE_ACNT,
+        },
+      });
+
+      if (acnt != null) {
+        return acnt.toClient();
+      } else {
+        throw new Error('Дансны мэдээлэл олдсонгүй');
+      }
+    } catch (err) {
+      this.logger.warn(`detail bank acnt error: ${err}`);
+      throw new Error('Дансны мэдээлэл татхад алдаа гарлаа');
     }
   }
 }

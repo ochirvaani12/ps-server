@@ -6,8 +6,8 @@ export class PsServiceCustServiceReqClient {
   spCustType: string;
   serviceType: string;
   serviceDate: Date;
-  startTime: string;
-  endTime: string;
+  startDatetime: Date;
+  endDatetime: Date;
   duration: number;
   status: string;
   price: number;
